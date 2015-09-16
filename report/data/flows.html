@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Sankey Diagram Example</title>
+  <style>
+
+#chart {
+  height: 500px;
+}
+
+.node rect {
+  cursor: move;
+  fill-opacity: .9;
+  shape-rendering: crispEdges;
+}
+
+.node text {
+  pointer-events: none;
+  text-shadow: 0 1px 0 #fff;
+}
+
+.link {
+  fill: none;
+  stroke: #000;
+  stroke-opacity: .2;
+}
+
+.link:hover {
+  stroke-opacity: .5;
+}
+
+  </style>
+</head>
+<body>
+
+<div id="chart"></div>
+
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="../sankey.js"></script>
+<script>
+	//Data
+	// Array of node objects (e.g. with a 'name' field here):
+var nodes_data = [
+      {"name": "flow1"},
+      {"name": "flow2"},
+	  {"name": "flow3"},
+	  {"name": "flow4"},
+	  {"name": "flow5"},
+	  {"name": "flow6"},
+	  {"name": "flow7"}
+];
+// Array of links between the nodes:
+// objects with 'source', 'target' node indices and a 'value' for the link weight:
+var links_data = [
+      {"source": 0, "target": 1, "value": 1},
+	  {"source": 1, "target": 2, "value": 1},
+	  {"source": 2, "target": 3, "value": 1},
+	  {"source": 3, "target": 4, "value": 1},
+	  {"source": 1, "target": 5, "value": 1},
+	  {"source": 6, "target": 1, "value": 1}
+];
+	//EndData
+  // Some setup stuff.
+  var margin = {top: 1, right: 1, bottom: 6, left: 1};
+  var width = 1900 - margin.left - margin.right;
+  var height = 400 - margin.top - margin.bottom;
+  var color = d3.scale.category20();
+
+  // SVG (group) to draw in.
+  var svg = d3.select("#chart").append("svg")
+          .attr({
+            width: width + margin.left + margin.right,
+            height: height + margin.top + margin.bottom
+          })
+          .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  // Set up Sankey object.
+  var sankey = d3.sankey()
+          .nodeWidth(30)
+          .nodePadding(10)
+          .size([width, height])
+
+  // Path data generator.
+  var path = sankey.link();
+	
+	  sankey
+      .nodes(nodes_data)
+      .links(links_data)
+      .layout(32);
+	  
+  // Draw the links.
+  var links = svg.append("g").selectAll(".link")
+          .data(links_data)
+          .enter()
+          .append("path")
+          .attr({
+            "class": "link",
+            d: path
+          })
+          .style("stroke-width", function (d) {
+            return Math.max(1, d.dy);
+          })
+
+  links.append("title")
+          .text(function (d) {
+            return d.source.name + " to " + d.target.name + " = " + d.value;
+          });
+
+  // Draw the nodes.
+  var nodes = svg.append("g").selectAll(".node")
+          .data(nodes_data)
+          .enter()
+          .append("g")
+          .attr({
+            "class": "node",
+            transform: function (d) {
+              return "translate(" + d.x + "," + d.y + ")";
+            }
+          })
+		      .call(d3.behavior.drag()
+      .origin(function(d) { return d; })
+      .on("dragstart", function() { this.parentNode.appendChild(this); })
+      .on("drag", dragmove));
+
+  nodes.append("rect")
+          .attr({
+            height: function (d) {
+              return d.dy;
+            },
+            width: sankey.nodeWidth()
+          })
+          .style({
+            fill: function (d) {
+              return d.color = color(d.name.replace(/ .*/, ""));
+            },
+            stroke: function (d) {
+              return d3.rgb(d.color).darker(2);
+            }
+          })
+          .append("title")
+          .text(function (d) {
+            return d.name;
+          });
+
+  nodes.append("text")
+      .attr("x", -6)
+      .attr("y", function(d) { return d.dy / 2; })
+      .attr("dy", ".35em")
+      .attr("text-anchor", "end")
+      .attr("transform", null)
+      .text(function(d) { return d.name; })
+    .filter(function(d) { return d.x < width / 2; })
+      .attr("x", 6 + sankey.nodeWidth())
+      .attr("text-anchor", "start");
+			
+
+	    function dragmove(d) {
+    d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ")");
+    sankey.relayout();
+    links.attr("d", path);
+  }
+</script>
+
+</body>
+</html>
