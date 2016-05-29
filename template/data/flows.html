@@ -42,13 +42,13 @@
 	//Data
 	// Array of node objects (e.g. with a 'name' field here):
 var nodes_data = [
-      {"name": "flow1"},
+      {"name": "flow1","type":"poll"},
       {"name": "flow2"},
-	  {"name": "flow3"},
-	  {"name": "flow4"},
-	  {"name": "flow5"},
-	  {"name": "flow6"},
-	  {"name": "flow7"}
+	  {"name": "flow3","type":"activemq"},
+	  {"name": "flow4","type":"#000000"},
+	  {"name": "flow5","type":"#000000"},
+	  {"name": "flow6","type":"#000000"},
+	  {"name": "flow7","type":"#000000"}
 ];
 // Array of links between the nodes:
 // objects with 'source', 'target' node indices and a 'value' for the link weight:
@@ -132,8 +132,17 @@ var links_data = [
             width: sankey.nodeWidth()
           })
           .style({
-            fill: function (d) {
-              return d.color = color(d.name.replace(/ .*/, ""));
+            fill: function (d) {			
+				switch (d.type) {
+					case "poll":
+						return "#ffffff";
+					break	
+					case "activemq":
+						return "#0000ff";
+					break						
+					default:
+						return "#000000";
+				}              
             },
             stroke: function (d) {
               return d3.rgb(d.color).darker(2);
@@ -142,7 +151,8 @@ var links_data = [
           .append("title")
           .text(function (d) {
             return d.name;
-          });
+          })
+		  ;
 
   nodes.append("text")
       .attr("x", -6)
