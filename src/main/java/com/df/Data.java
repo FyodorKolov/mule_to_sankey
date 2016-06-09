@@ -10,6 +10,9 @@ public class Data {
 	@SerializedName("name")
 	private String Name;
 	@Expose
+	@SerializedName("subname")
+	private String SubName;
+	@Expose
 	@SerializedName("type")
 	private String Type;	
 	
@@ -30,5 +33,11 @@ public class Data {
 	}
 	public void setIndex(Integer index) {
 		this.index = index;
+	}
+	public String getSubName() {
+		return SubName;
+	}
+	public void setSubName(String subName) {
+		SubName = subName;
 	}
 }

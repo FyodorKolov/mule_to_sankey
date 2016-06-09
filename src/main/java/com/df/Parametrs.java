@@ -1,36 +1,26 @@
 package com.df;
 
+import java.util.Map;
+
 public class Parametrs {
 
-	private String UnickAttribute;
 	private String Type;
-	private Boolean In=false;
-	public Parametrs(String unickAttribute,String type_,Boolean in) {
-		this.UnickAttribute=unickAttribute;
+	private Map<String,UnickAttribute> listElem; 
+	public Parametrs(String type_,Map<String,UnickAttribute> in) {
 		this.Type=type_;
-		this.In=in;
+		this.listElem=in;
 	}
 	
-	public Parametrs(String unickAttribute,String type_){
-		this(unickAttribute,type_,false);
-	}
-	
-	public String getUnickAttribute() {
-		return UnickAttribute;
-	}
-	public void setUnickAttribute(String unickAttribute) {
-		UnickAttribute = unickAttribute;
-	}
 	public String getType() {
 		return Type;
 	}
 	public void setType(String type) {
 		Type = type;
 	}
-	public Boolean getIn() {
-		return In;
+	public Map<String,UnickAttribute> getListElem() {
+		return listElem;
 	}
-	public void setIn(Boolean in) {
-		In = in;
+	public void setListElem(Map<String,UnickAttribute> in) {
+		listElem = in;
 	}
 }
