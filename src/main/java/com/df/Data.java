@@ -14,7 +14,10 @@ public class Data {
 	private String SubName;
 	@Expose
 	@SerializedName("type")
-	private String Type;	
+	private String Type;
+	@Expose
+	@SerializedName("stopped")
+	private Boolean Stopped=false;
 	
 	public String getName() {
 		return Name;
@@ -39,5 +42,11 @@ public class Data {
 	}
 	public void setSubName(String subName) {
 		SubName = subName;
+	}
+	public Boolean getStopped() {
+		return Stopped;
+	}
+	public void setStopped(Boolean stopped) {
+		Stopped = stopped;
 	}
 }

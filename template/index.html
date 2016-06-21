@@ -51,16 +51,22 @@ text {
 var width = 1680,
     height = 768;
 var legendData={};
-legendData["vm"]={color:"#0000ff"};
-legendData["jms"]={color:"1ED2CC"};
-legendData["quartz"]={color:"#00ff00"};
-legendData["magento"]={color:"#A50B0B"};
-legendData["markavip"]={color:"#ff0000"};
-legendData["sfdc"]={color:"#ff00ff"};
-legendData["database"]={color:"#7709a7"};
-legendData["responsys"]={color:"#2E8827"};
-legendData["kinesis"]={color:"#FFFF00"};
-legendData["http"]={color:"#000000"};
+${types}
+
+function d2h(d) {
+    var h = (+d).toString(16);
+    return h.length === 1 ? '0' + h : h;
+}
+
+function getGrayScaleColor(color) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
+    var r=parseInt(result[1], 16);
+    var g=parseInt(result[2], 16);
+    var b=parseInt(result[3], 16);    
+	var sum=0.21*r+0.72*g+0.07*b;
+	var new_color='#'+d2h(Math.round(sum))+ d2h(Math.round(sum)) + d2h(Math.round(sum));
+	return new_color;
+}
 
 function getRandomColor() {
     var letters = '0123456789ABCDEF'.split('');
@@ -195,7 +201,12 @@ var path = container.append("svg:g").selectAll("path")
       .attr("r", 5)
       .style("fill",function (d) {	
 				if (legendData[d.type]!=null) {
-					return legendData[d.type].color;
+					if (d.stopped) {
+						return getGrayScaleColor(legendData[d.type].color);
+					} else {
+						return legendData[d.type].color;
+					}
+					//return "#acacac";
 				}
 				else { return "#000000"}
 				}				
